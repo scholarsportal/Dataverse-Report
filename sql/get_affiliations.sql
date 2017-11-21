@@ -1,0 +1,3 @@
+SELECT DISTINCT affiliation
+FROM authenticateduser
+Order by affiliation
