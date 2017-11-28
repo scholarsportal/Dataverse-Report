@@ -1,7 +1,9 @@
-#The following program creates an excel file with worksheets showing 
+#The following program creates an excel file with worksheets showing monthly totals over
 #1. downloads by dataverse (high level)
 #2. downloads by dataset (lower level)
-
+#3. datatypes loaded
+#4. dataset subjects
+#5. accounts created by affiliation
 
 import pandas as pd
 import numpy as np
@@ -32,7 +34,7 @@ with open('sql/get_dataset_files.sql')as f:
 with open('sql/get_dataset_status.sql')as f:
 	get_dataset_status_sql = f.read()
 
-##SEET 3
+##SHEET 3
 with open('sql/get_content_types.sql') as f:
 	get_content_types_sql = f.read()
 
