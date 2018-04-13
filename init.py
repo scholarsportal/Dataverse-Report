@@ -4,13 +4,14 @@
 #3. datatypes loaded
 #4. dataset subjects
 #5. accounts created by affiliation
-
-import pandas as pd
+import sys
+print(sys.version_info)
 import numpy as np
+import openpyxl
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
-import time
 import sql_connect
+import csv
 ######
 
 with open('sql/get_objects.sql') as f:
@@ -287,9 +288,9 @@ conn = sql_connect.connect()
 wb = Workbook()
 ws = wb.active
 #
-start_date='2014-10-01'
+start_date='2016-10-01'
 end_date='2017-10-01'
-ws_cols_count=12*3#months of year and number years (depending on date ranges)
+ws_cols_count=12*1#months of year and number years (depending on date ranges)
 #
 #SHEET 1 ##########################################
 needs_table_header=True#Set a Flag which adds the header once withing the called function
@@ -305,7 +306,7 @@ ws_row_count=1#increments with each added row - used to calculate the totals
 ws_col_start=4#the col to start calculateding from used in the last col sum 
 getSubDataverses(1,1)
 addWorkSheetFooter(4,ws_cols_count+2,2)
-#####SHEET 2#######################################
+# #####SHEET 2#######################################
 needs_table_header=True
 level_count=1
 table_header=[]
@@ -389,3 +390,19 @@ addWorkSheetFooter(2,ws_cols_count+2,0)
 
 ####
 wb.save("Dataverse Usage Report.xlsx")
+##
+def createCSV (file_name, sheet):
+	with open(file_name, 'w', newline="") as f:
+		c = csv.writer(f)
+		for r in sheet.rows:
+			row=[]
+			for cell in r:
+				row.append(cell.value)
+			c.writerow(row)
+####
+wb = openpyxl.load_workbook('Dataverse Usage Report.xlsx', data_only=True)
+createCSV('Downloads_by_Dataverse.csv', wb.get_active_sheet())
+createCSV('Downloads_by_Dataset.csv', wb["Downloads by Dataset"])
+createCSV('File_Types.csv', wb["File Types"])
+createCSV('Subjects.csv', wb["Subjects"])
+createCSV('Users_by_Affiliations.csv', wb["Users by Affiliations"])
