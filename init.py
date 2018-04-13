@@ -4,8 +4,7 @@
 #3. datatypes loaded
 #4. dataset subjects
 #5. accounts created by affiliation
-import sys
-print(sys.version_info)
+
 import numpy as np
 import openpyxl
 from openpyxl import Workbook
@@ -13,7 +12,7 @@ from openpyxl.utils import get_column_letter
 import sql_connect
 import csv
 ######
-
+print "load SQL functions"
 with open('sql/get_objects.sql') as f:
 	get_objects_sql = f.read()
 with open('sql/get_dataverse_name.sql') as f:
@@ -283,13 +282,15 @@ def addWorkSheetFooter(start_col,calc_col_count,pad):
 	
 #TODO create objects to store varaibles instead of using global variables
 #connect to the database
+print "Connecting to database"
 conn = sql_connect.connect()
 ####create the workbook
+print "Create the workbook"
 wb = Workbook()
 ws = wb.active
 #
-start_date='2016-10-01'
-end_date='2017-10-01'
+start_date='2017-04-01'
+end_date='2018-04-01'
 ws_cols_count=12*1#months of year and number years (depending on date ranges)
 #
 #SHEET 1 ##########################################
@@ -392,7 +393,7 @@ addWorkSheetFooter(2,ws_cols_count+2,0)
 wb.save("Dataverse Usage Report.xlsx")
 ##
 def createCSV (file_name, sheet):
-	with open(file_name, 'w', newline="") as f:
+	with open(file_name, 'w') as f:
 		c = csv.writer(f)
 		for r in sheet.rows:
 			row=[]
@@ -400,8 +401,10 @@ def createCSV (file_name, sheet):
 				row.append(cell.value)
 			c.writerow(row)
 ####
+print "Generate CSV files"
 wb = openpyxl.load_workbook('Dataverse Usage Report.xlsx', data_only=True)
-createCSV('Downloads_by_Dataverse.csv', wb.get_active_sheet())
+
+createCSV('Downloads_by_Dataverse.csv', wb["Downloads by Dataverse"])
 createCSV('Downloads_by_Dataset.csv', wb["Downloads by Dataset"])
 createCSV('File_Types.csv', wb["File Types"])
 createCSV('Subjects.csv', wb["Subjects"])
