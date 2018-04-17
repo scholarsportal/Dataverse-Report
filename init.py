@@ -297,7 +297,7 @@ ws = wb.active
 today=datetime.datetime.now() #datetime.date(2016,3, 31)
 #rollback to the previous month and create a range from 2017-01-01 - 2017-01-31
 _start_date=(today - relativedelta(years=1))
-start_date=datetime.date(_start_date.year, _start_date.month,1)
+start_date=datetime.date(_start_date.year, _start_date.month,1).strftime('%Y-%m-%d')
 _end_date=(today - relativedelta(months=1))
 end_date=datetime.date(_end_date.year, _end_date.month, calendar.monthrange(_end_date.year,_end_date.month)[1]).strftime('%Y-%m-%d')
 
