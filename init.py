@@ -11,8 +11,10 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 import sql_connect
 import csv
+
 import datetime
 from dateutil.relativedelta import relativedelta
+
 ######
 print "load SQL functions"
 with open('sql/get_objects.sql') as f:
@@ -296,6 +298,7 @@ end_date=datetime.datetime.now().strftime('%Y-%m-%d')
 
 print "from "+start_date+" to "+ end_date
 
+
 ws_cols_count=12*1#months of year and number years (depending on date ranges)
 #
 #SHEET 1 ##########################################
@@ -398,7 +401,9 @@ addWorkSheetFooter(2,ws_cols_count+2,0)
 wb.save("Dataverse Usage Report.xlsx")
 ##
 def createCSV (file_name, sheet):
+
 	with open(file_name, 'w' ) as f:
+
 		c = csv.writer(f)
 		for r in sheet.rows:
 			row=[]
@@ -414,7 +419,4 @@ createCSV('Downloads_by_Dataset.csv', wb["Downloads by Dataset"])
 createCSV('File_Types.csv', wb["File Types"])
 createCSV('Subjects.csv', wb["Subjects"])
 createCSV('Users_by_Affiliations.csv', wb["Users by Affiliations"])
-
-
-
 
