@@ -5,14 +5,16 @@
 #4. dataset subjects
 #5. accounts created by affiliation
 
-import pandas as pd
 import numpy as np
+import openpyxl
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
-import time
 import sql_connect
+import csv
+import datetime
+from dateutil.relativedelta import relativedelta
 ######
-
+print "load SQL functions"
 with open('sql/get_objects.sql') as f:
 	get_objects_sql = f.read()
 with open('sql/get_dataverse_name.sql') as f:
@@ -282,14 +284,19 @@ def addWorkSheetFooter(start_col,calc_col_count,pad):
 	
 #TODO create objects to store varaibles instead of using global variables
 #connect to the database
+print "Connecting to database"
 conn = sql_connect.connect()
 ####create the workbook
+print "Create the workbook"
 wb = Workbook()
 ws = wb.active
 #
-start_date='2014-10-01'
-end_date='2017-10-01'
-ws_cols_count=12*3#months of year and number years (depending on date ranges)
+start_date=(datetime.datetime.now() - relativedelta(years=1)).strftime('%Y-%m-%d')
+end_date=datetime.datetime.now().strftime('%Y-%m-%d')
+
+print "from "+start_date+" to "+ end_date
+
+ws_cols_count=12*1#months of year and number years (depending on date ranges)
 #
 #SHEET 1 ##########################################
 needs_table_header=True#Set a Flag which adds the header once withing the called function
@@ -305,7 +312,7 @@ ws_row_count=1#increments with each added row - used to calculate the totals
 ws_col_start=4#the col to start calculateding from used in the last col sum 
 getSubDataverses(1,1)
 addWorkSheetFooter(4,ws_cols_count+2,2)
-#####SHEET 2#######################################
+# #####SHEET 2#######################################
 needs_table_header=True
 level_count=1
 table_header=[]
@@ -326,7 +333,7 @@ getDatasets("BY_MONTH")
 #
 addWorkSheetFooter(ws_col_start-1,ws_cols_count+3,ws_col_start-3)
 
-######SHEET 3
+#####SHEET 3
 needs_table_header=True
 level_count=1
 #
@@ -389,3 +396,25 @@ addWorkSheetFooter(2,ws_cols_count+2,0)
 
 ####
 wb.save("Dataverse Usage Report.xlsx")
+##
+def createCSV (file_name, sheet):
+	with open(file_name, 'w' ) as f:
+		c = csv.writer(f)
+		for r in sheet.rows:
+			row=[]
+			for cell in r:
+				row.append(cell.value)
+			c.writerow([unicode(s).encode("utf-8") for s in row])
+####
+print "Generate CSV files"
+wb = openpyxl.load_workbook('Dataverse Usage Report.xlsx', data_only=True)
+
+createCSV('Downloads_by_Dataverse.csv', wb["Downloads by Dataverse"])
+createCSV('Downloads_by_Dataset.csv', wb["Downloads by Dataset"])
+createCSV('File_Types.csv', wb["File Types"])
+createCSV('Subjects.csv', wb["Subjects"])
+createCSV('Users_by_Affiliations.csv', wb["Users by Affiliations"])
+
+
+
+
