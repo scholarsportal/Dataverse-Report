@@ -399,7 +399,7 @@ def createCSV (file_name, sheet):
 			row=[]
 			for cell in r:
 				row.append(cell.value)
-			c.writerow(row)
+			c.writerow([unicode(s).encode("utf-8") for s in row])
 ####
 print "Generate CSV files"
 wb = openpyxl.load_workbook('Dataverse Usage Report.xlsx', data_only=True)
