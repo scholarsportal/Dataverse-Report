@@ -344,9 +344,7 @@ end_date=datetime.date(_end_date.year, _end_date.month, calendar.monthrange(_end
 # end_date="2018-04-28"
 print ("from "+start_date+" to "+ end_date)
 
-
 ws_cols_count=12*1-1#months of year and number years (depending on date ranges)
-#ws_cols_count=12*4
 
 #SHEET 1 ##########################################
 needs_table_header=True#Set a Flag which adds the header once withing the called function
