@@ -4,6 +4,10 @@
 #3. datatypes loaded
 #4. dataset subjects
 #5. accounts created by affiliation
+import sys
+print(sys.version_info)
+if sys.version_info[0] > 3:
+    raise "Must be using Python 2.7"
 
 import numpy as np
 import openpyxl
@@ -17,13 +21,15 @@ from dateutil.relativedelta import relativedelta
 import calendar
 
 ######
-print "load SQL functions"
+print ("load SQL functions")
 with open('sql/get_objects.sql') as f:
 	get_objects_sql = f.read()
 with open('sql/get_dataverse_name.sql') as f:
 	get_dataverse_name_sql = f.read()
 with open('sql/downloads_by_month.sql') as f:
 	downloads_by_month_sql = f.read()
+with open('sql/downloads_all_by_id.sql') as f:
+	downloads_all_by_id_sql = f.read()
 
 ##SHEET 2
 with open('sql/get_datasets.sql') as f:
@@ -38,6 +44,8 @@ with open('sql/get_dataset_files.sql')as f:
 	get_dataset_files_sql = f.read()
 with open('sql/get_dataset_status.sql')as f:
 	get_dataset_status_sql = f.read()
+with open('sql/downloads_all_by_dataset_id.sql')as f:
+	downloads_all_by_dataset_id = f.read()
 
 ##SHEET 3
 with open('sql/get_content_types.sql') as f:
@@ -54,6 +62,8 @@ with open('sql/get_affiliations.sql') as f:
 	get_affiliations_sql = f.read()
 with open('sql/get_users_by_month_affiliations.sql') as f:
 	get_users_by_month_affiliations_sql = f.read()
+with open('sql/get_all_users_by_affiliation.sql') as f:
+	get_all_users_by_affiliation = f.read()
 
 #this is a recursive function allowing the drilldown of relationships from whichever level you start with - determined by dataverse_id 
 def getSubDataverses(dataverse_id,level):
@@ -172,11 +182,29 @@ def getDownloadsByMonthResult(object_id,_table_row,sql):
 	if needs_table_header:
 		needs_table_header=False
 		table_header.append("Total")#add total col
+		table_header.append("All Downloads")#add total col
 		ws.append(table_header)#first line of workbook
 	ws_row_count+=1
 	ws_col_end=get_column_letter(ws_col_start+ws_cols_count)
 	_table_row.append("=SUM("+get_column_letter(ws_col_start)+str(ws_row_count)+":"+ws_col_end+str(ws_row_count)+")")#add calculated cell
+
+
+	if sql==dataset_downloads_by_month_sql:#use alternate sql for dataset
+		_sql=downloads_all_by_dataset_id
+	else:
+		_sql=downloads_all_by_id_sql
+	_table_row.append(getAllDownloads(object_id,_sql))#add all downloads cell
 	ws.append(_table_row)#second to n line of workbook
+def getAllDownloads(object_id,sql):
+	cur = conn.cursor()
+	sql=sql.replace("{object_id}", str(object_id))
+	cur.execute(sql)
+	rows = cur.fetchall()
+	for row in rows:
+		count=row[0]
+	return count
+
+
 def getDatasetTypes():
 	cur = conn.cursor()
 	cur.execute(get_content_types_sql)
@@ -256,6 +284,7 @@ def getAffiliationsByMonth(affiliations):
 	for date in ordered_dates:
 		table_header.append(date.strftime("%b")+" - "+date.strftime("%Y"))
 	table_header.append("Totals")
+	table_header.append("All Time")
 
 	ws.append(table_header)#first line of workbook
 	#
@@ -270,7 +299,17 @@ def getAffiliationsByMonth(affiliations):
 		#Add totals col
 		ws_row_count+=1
 		_table_row.append("=SUM("+get_column_letter(ws_col_start)+str(ws_row_count)+":"+ws_col_end+str(ws_row_count)+")")#add calculated cell
+		_table_row.append(getAllUsersByAffiliation(a))
 		ws.append(_table_row)
+
+def getAllUsersByAffiliation(affiliation):
+	cur = conn.cursor()
+	sql=get_all_users_by_affiliation.replace("{affiliation}", str(affiliation.replace("'", "''")))
+	cur.execute(sql)
+	rows = cur.fetchall()
+	for row in rows:
+		count=row[0]
+	return count
 
 def addWorkSheetFooter(start_col,calc_col_count,pad):
 	#start_col - the position of the fist calculated col 
@@ -287,10 +326,10 @@ def addWorkSheetFooter(start_col,calc_col_count,pad):
 	
 #TODO create objects to store varaibles instead of using global variables
 #connect to the database
-print "Connecting to database"
+print ("Connecting to database")
 conn = sql_connect.connect()
 ####create the workbook
-print "Create the workbook"
+print ("Create the workbook")
 wb = Workbook()
 ws = wb.active
 #
@@ -301,11 +340,14 @@ start_date=datetime.date(_start_date.year, _start_date.month,1).strftime('%Y-%m-
 _end_date=(today - relativedelta(months=1))
 end_date=datetime.date(_end_date.year, _end_date.month, calendar.monthrange(_end_date.year,_end_date.month)[1]).strftime('%Y-%m-%d')
 
-print "from "+start_date+" to "+ end_date
+# start_date="2014-04-1"
+# end_date="2018-04-28"
+print ("from "+start_date+" to "+ end_date)
 
 
-ws_cols_count=12*1#months of year and number years (depending on date ranges)
-#
+ws_cols_count=12*1-1#months of year and number years (depending on date ranges)
+#ws_cols_count=12*4
+
 #SHEET 1 ##########################################
 needs_table_header=True#Set a Flag which adds the header once withing the called function
 level_count=1#used to specify how many levels to drilldown
@@ -317,10 +359,10 @@ table_header.append("Publication Date")
 #
 ws.title = "Downloads by Dataverse"#Label the worksheet
 ws_row_count=1#increments with each added row - used to calculate the totals
-ws_col_start=4#the col to start calculateding from used in the last col sum 
+ws_col_start=4#the col to start calculateding from used in the last col sum
 getSubDataverses(1,1)
-addWorkSheetFooter(4,ws_cols_count+2,2)
-# #####SHEET 2#######################################
+addWorkSheetFooter(4,ws_cols_count+3,2)
+#####SHEET 2#######################################
 needs_table_header=True
 level_count=1
 table_header=[]
@@ -339,7 +381,7 @@ ws_col_start=len(table_header)+1
 #
 getDatasets("BY_MONTH")
 #
-addWorkSheetFooter(ws_col_start-1,ws_cols_count+3,ws_col_start-3)
+addWorkSheetFooter(ws_col_start-1,ws_cols_count+4,ws_col_start-3)
 
 #####SHEET 3
 needs_table_header=True
@@ -400,11 +442,11 @@ table_header.append("Affiliation")
 wb.create_sheet("Users by Affiliations")
 ws = wb["Users by Affiliations"]
 getAffiliationsByMonth(getAffiliations())
-addWorkSheetFooter(2,ws_cols_count+2,0)
+addWorkSheetFooter(2,ws_cols_count+3,0)
 
-####
+# ####
 wb.save("Dataverse Usage Report.xlsx")
-##
+# ##
 def createCSV (file_name, sheet):
 
 	with open(file_name, 'w' ) as f:
@@ -416,7 +458,7 @@ def createCSV (file_name, sheet):
 				row.append(cell.value)
 			c.writerow([unicode(s).encode("utf-8") for s in row])
 ####
-print "Generate CSV files"
+print ("Generate CSV files")
 wb = openpyxl.load_workbook('Dataverse Usage Report.xlsx', data_only=True)
 
 createCSV('Downloads_by_Dataverse.csv', wb["Downloads by Dataverse"])
