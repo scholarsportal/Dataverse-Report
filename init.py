@@ -15,6 +15,7 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 import sql_connect
 import csv
+from openpyxl import load_workbook
 
 import datetime
 from dateutil.relativedelta import relativedelta
@@ -330,8 +331,9 @@ print ("Connecting to database")
 conn = sql_connect.connect()
 ####create the workbook
 print ("Create the workbook")
-wb = Workbook()
-ws = wb.active
+#wb = Workbook()
+wb = load_workbook('template.xlsx')
+
 #
 today=datetime.datetime.now() #datetime.date(2016,3, 31)
 #rollback to the previous month and create a range from 2017-01-01 - 2017-01-31
@@ -355,12 +357,13 @@ table_header.append("Top Level")
 table_header.append("Category")
 table_header.append("Publication Date")
 #
-ws.title = "Downloads by Dataverse"#Label the worksheet
+wb.create_sheet('Downloads by Dataverse')
+ws = wb["Downloads by Dataverse"]
 ws_row_count=1#increments with each added row - used to calculate the totals
 ws_col_start=4#the col to start calculateding from used in the last col sum
 getSubDataverses(1,1)
 addWorkSheetFooter(4,ws_cols_count+3,2)
-#####SHEET 2#######################################
+# #####SHEET 2#######################################
 needs_table_header=True
 level_count=1
 table_header=[]
@@ -464,4 +467,3 @@ createCSV('Downloads_by_Dataset.csv', wb["Downloads by Dataset"])
 createCSV('File_Types.csv', wb["File Types"])
 createCSV('Subjects.csv', wb["Subjects"])
 createCSV('Users_by_Affiliations.csv', wb["Users by Affiliations"])
-
