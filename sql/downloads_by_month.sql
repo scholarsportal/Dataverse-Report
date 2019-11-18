@@ -17,9 +17,9 @@ FROM  (
                         , interval  '1 month') day
    ) d
 LEFT   JOIN (
-select date_trunc('month', responsetime)::date AS day,count(downloadtype) 
-from guestbookresponse 
-where downloadtype like '%ownload%' and dataset_id IN (SELECT child FROM tree) 
+select date_trunc('month', responsetime)::date AS day,count(downloadtype)
+from guestbookresponse, filedownload
+where guestbookresponse.id = filedownload.guestbookresponse_id AND downloadtype like '%ownload%' and dataset_id IN (SELECT child FROM tree)
    GROUP  BY 1
    ) t USING (day)
 ORDER  BY day;

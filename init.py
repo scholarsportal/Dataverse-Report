@@ -305,7 +305,7 @@ def getAffiliationsByMonth(affiliations):
 
 def getAllUsersByAffiliation(affiliation):
 	cur = conn.cursor()
-	sql=get_all_users_by_affiliation.replace("{affiliation}", str(affiliation.replace("'", "''")))
+	sql=get_all_users_by_affiliation.replace("{affiliation}", str(affiliation).replace("'", "''"))
 	cur.execute(sql)
 	rows = cur.fetchall()
 	for row in rows:

@@ -10,6 +10,7 @@ WITH RECURSIVE tree(child, root) AS (
 )
 select count(downloadtype)
 from guestbookresponse
+join filedownload on filedownload.guestbookresponse_id = guestbookresponse.id
 join dvobject on dvobject.id = guestbookresponse.datafile_id
 where dataset_id IN (SELECT child FROM tree)
 and dvobject.publicationdate is not null;
