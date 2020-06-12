@@ -6,4 +6,15 @@ To use this code, edit the `sql_connect.py` file with connection details for you
 
 The resulting excel file can be used in the metrics dashboard available at https://github.com/scholarsportal/Dataverse-Web-Report.
 
-Tested with Dataverse Version 4.10.1
+Tested with Dataverse Version 4.19
+
+# Dev Environment Set Up
+
+To install python modules
+
+pip3 install -r requirements.txt
+
+
+To update requirements.txt 
+
+pip3 freeze > requirements.txt

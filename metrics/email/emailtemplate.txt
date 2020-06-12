@@ -1,0 +1,1 @@
+New monthly metrics for Scholars Portal Dataverse are now available. Please see the attached spreadsheet, or view the data online at https://dataverse.scholarsportal.info/metrics
