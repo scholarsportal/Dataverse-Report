@@ -27,9 +27,7 @@ def read_template(filename):
 
 def send_email(file_attachment):
     email_config = config.read('email')
-    s = smtplib.SMTP(email_config.get('host'), email_config.get('port'))
-    s.starttls()
-    s.login(email_config.get('address'), email_config.get('password'))
+    server = smtplib.SMTP_SSL(email_config.get('host'), email_config.get('port'))
     names, emails = get_contacts(os.path.join('metrics/email', 'emailcontacts.txt'))
     message_template = read_template(os.path.join('metrics/email', 'emailtemplate.txt'))
     attachment = open(file_attachment, "rb")
@@ -37,16 +35,15 @@ def send_email(file_attachment):
     p.set_payload(attachment.read())
     encoders.encode_base64(p)
     p.add_header('Content-Disposition', "attachment; filename= %s" % os.path.basename(file_attachment))
-    for name, email in zip(names, emails):
+    for name, to_address in zip(names, emails):
         msg = MIMEMultipart()  # create a message
         msg.attach(p)
         message = message_template.substitute(PERSON_NAME=name.title())
-        msg['From'] = email_config.get('address')
-        msg['To'] = email
         msg['Subject'] = email_config.get('subject')
         msg.attach(MIMEText(message, 'plain'))
-        s.send_message(msg)
+        server.sendmail(email_config.get('from_address'), to_address, msg)
         del msg
+    server.quit()
 
 
 # send_email(os.path.join('Dataverse Usage Report1.xlsx'))
