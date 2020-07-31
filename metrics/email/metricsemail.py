@@ -27,7 +27,7 @@ def read_template(filename):
 
 def send_email(file_attachment):
     email_config = config.read('email')
-    server = smtplib.SMTP_SSL(email_config.get('host'), email_config.get('port'))
+    server = smtplib.SMTP(email_config.get('host'), email_config.get('port'))
     names, emails = get_contacts(os.path.join('metrics/email', 'emailcontacts.txt'))
     message_template = read_template(os.path.join('metrics/email', 'emailtemplate.txt'))
     attachment = open(file_attachment, "rb")
