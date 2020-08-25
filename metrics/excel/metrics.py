@@ -74,9 +74,7 @@ class Metrics:
         print('Processing sheet 5')
         uasheet.UserAffiliation(start_date, end_date, workbook, month_sub_dir).create()
 
-        report = config.read('excel').get('report')
-        file = os.path.join(month_sub_dir, report)
-        metricsemail.send_email(file)
+        metricsemail.send_email()
 
     @staticmethod
     def create_workbook(month_sub_dir):

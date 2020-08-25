@@ -25,19 +25,13 @@ def read_template(filename):
     return Template(template_file_content)
 
 
-def send_email(file_attachment):
+def send_email():
     email_config = config.read('email')
     server = smtplib.SMTP(email_config.get('host'), email_config.get('port'))
     names, emails = get_contacts(os.path.join('metrics/email', 'emailcontacts.txt'))
     message_template = read_template(os.path.join('metrics/email', 'emailtemplate.txt'))
-    attachment = open(file_attachment, "rb")
-    p = MIMEBase('application', 'octet-stream')
-    p.set_payload(attachment.read())
-    encoders.encode_base64(p)
-    p.add_header('Content-Disposition', "attachment; filename= %s" % os.path.basename(file_attachment))
     for name, to_address in zip(names, emails):
         msg = MIMEMultipart()  # create a message
-        msg.attach(p)
         message = message_template.substitute(PERSON_NAME=name.title())
         msg['Subject'] = email_config.get('subject')
         msg.attach(MIMEText(message, 'plain'))
