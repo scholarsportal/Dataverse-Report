@@ -33,8 +33,7 @@ def get_reports_list():
 @app.route('/api/metrics/report', methods=['GET'])
 def get_report_by_date():
     """Download a file."""
-    # archive_dir = config.read('excel').get('archive_dir')
-    archive_dir = 'output'
+    archive_dir = config.read('excel').get('archive_dir')
     metricsdate = request.args.get('date')
     if not metricsdate:
         metricsdate = get_latest_metrics_folder()
