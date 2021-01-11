@@ -23,7 +23,7 @@ def get_reports_list():
     archive_dir = config.read('excel').get('archive_dir')
     print('REST archive_dir: ' + archive_dir)
     dirs = []
-    for filename in os.listdir(archive_dir):
+    for filename in sorted(os.listdir(archive_dir), reverse=True):
         path = os.path.join(archive_dir, filename)
         if os.path.isdir(path):
             dirs.append(filename)
