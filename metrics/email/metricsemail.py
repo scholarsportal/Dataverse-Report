@@ -33,6 +33,8 @@ def send_email():
     for name, to_address in zip(names, emails):
         msg = MIMEMultipart()  # create a message
         message = message_template.substitute(PERSON_NAME=name.title())
+        msg['To'] = to_address
+        msg['From'] = email_config.get('from_address')
         msg['Subject'] = email_config.get('subject')
         msg.attach(MIMEText(message, 'plain'))
         server.sendmail(email_config.get('from_address'), to_address, msg.as_string())
