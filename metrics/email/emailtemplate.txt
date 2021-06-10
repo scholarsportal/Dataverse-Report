@@ -1,5 +1,9 @@
-New monthly metrics for Scholars Portal Dataverse are now available. View the data online at https://dataverse.scholarsportal.info/metrics
+New monthly metrics for Scholars Portal Dataverse are now available. View the data online at https://dataverse.scholarsportal.info/metrics.
+
+This email was automatically generated. If you have any questions or suggestions, contact the Scholars Portal Dataverse team at dataverse@scholarsportal.info.
 
 //
 
-De nouvelles métriques mensuelles pour Scholars Portal Dataverse sont desormais disponibles. Consultez les données en ligne sur https://dataverse.scholarsportal.info/metrics
+De nouvelles métriques mensuelles pour le Dataverse de Scholars Portal sont désormais disponibles. Consultez les données en ligne sur https://dataverse.scholarsportal.info/metrics.
+
+Ce courriel est généré automatiquement. Pour toute question ou suggestion, veuillez communiquer avec l’équipe du Dataverse de Scholars Portal à dataverse@scholarsportal.info.
