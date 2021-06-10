@@ -8,13 +8,12 @@ The resulting excel file can be used in the metrics dashboard available at https
 
 Tested with Dataverse Version 4.19
 
-# Dev Environment Set Up
+## Dev Environment Set Up
 
-To install python modules
+To install python modules:
 
-pip3 install -r requirements.txt
+`pip3 install -r requirements.txt`
 
+To update requirements.txt:
 
-To update requirements.txt 
-
-pip3 freeze > requirements.txt
+`pip3 freeze > requirements.txt`
