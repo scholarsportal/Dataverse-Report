@@ -14,7 +14,7 @@ cors = CORS(app)
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>Dataverse Metrics</h1>"
+    return "<h1>Borealis Metrics</h1>"
 
 
 @app.route('/api/metrics/list', methods=['GET'])
@@ -39,7 +39,7 @@ def get_report_by_date():
         metricsdate = get_latest_metrics_folder()
     filename = request.args.get('filename')
     if not filename:
-        filename = 'Dataverse Usage Report.xlsx'
+        filename = 'Borealis Usage Report.xlsx'
     file = os.path.join(archive_dir, metricsdate, filename)
     return send_from_directory(archive_dir, os.path.join(metricsdate, filename), as_attachment=True)
 
@@ -54,7 +54,7 @@ def get_latest_metrics_folder():
     end_date = datetime.date(_end_date.year, _end_date.month,
                              calendar.monthrange(_end_date.year, _end_date.month)[1]).strftime(
         '%Y-%m-%d')
-    print('Generate Dataverse Usage Report for period: ' + start_date + ' to ' + end_date)
+    print('Generate Borealis Usage Report for period: ' + start_date + ' to ' + end_date)
     month_sub_dir = os.path.join(start_date + ' to ' + end_date)
     print('Subdirectory: ' + month_sub_dir)
     return month_sub_dir
