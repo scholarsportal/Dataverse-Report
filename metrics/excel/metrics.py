@@ -41,7 +41,7 @@ class Metrics:
             end_date = datetime.date(_end_date.year, _end_date.month,
                                      calendar.monthrange(_end_date.year, _end_date.month)[1]).strftime(
                 '%Y-%m-%d')
-            print('Generating Dataverse Historical Usage Report for period: ' + start_date + ' to ' + end_date)
+            print('Generating Borealis Historical Usage Report for period: ' + start_date + ' to ' + end_date)
             history_start_date = history_start_date + relativedelta(months=1)
             periods = periods - 1
             Metrics.create(start_date, end_date)
@@ -55,7 +55,7 @@ class Metrics:
         end_date = datetime.date(_end_date.year, _end_date.month,
                                  calendar.monthrange(_end_date.year, _end_date.month)[1]).strftime(
             '%Y-%m-%d')
-        print('Generate Dataverse Usage Report for period: ' + start_date + ' to ' + end_date)
+        print('Generate Borealis Usage Report for period: ' + start_date + ' to ' + end_date)
         Metrics.create(start_date, end_date)
 
     @staticmethod
