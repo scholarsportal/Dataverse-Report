@@ -39,7 +39,7 @@ def get_report_by_date():
         metricsdate = get_latest_metrics_folder()
     filename = request.args.get('filename')
     if not filename:
-        filename = 'Borealis Usage Report.xlsx'
+        filename = 'Borealis_usage_report.xlsx'
     file = os.path.join(archive_dir, metricsdate, filename)
     return send_from_directory(archive_dir, os.path.join(metricsdate, filename), as_attachment=True)
 
